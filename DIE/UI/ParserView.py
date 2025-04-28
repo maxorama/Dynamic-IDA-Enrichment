@@ -2,7 +2,6 @@ from DIE.Lib import DataParser
 from idaapi import PluginForm
 from PyQt5 import QtGui, QtCore, QtWidgets
 
-
 class ParserView(PluginForm):
     """
     DIE Value View
@@ -17,7 +16,7 @@ class ParserView(PluginForm):
 
         return PluginForm.Show(self,
                                "Parser View",
-                               options=PluginForm.FORM_PERSIST)
+                               options=PluginForm.WOPN_PERSIST)
     def OnCreate(self, form):
         """
         Called when the view is created

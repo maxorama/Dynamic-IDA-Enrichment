@@ -19,7 +19,7 @@ class BreakpointView(PluginForm):
     def Show(self):
         return PluginForm.Show(self,
                                "Breakpoint View",
-                               options=PluginForm.FORM_PERSIST)
+                               options=PluginForm.WOPN_PERSIST)
     def OnCreate(self, form):
         """
         Called when the view is created

@@ -1,8 +1,8 @@
 
-
 from idaapi import Form
 import idautils
 import idc
+
 from DIE.Lib.IDAConnector import *
 from DIE.Lib import DebugAPI
 
@@ -67,9 +67,3 @@ def Show():
         die_debugger.start_debug(start_func_ea, end_func_ea, True)
 
     chooser.Free()
-
-
-
-
-
-

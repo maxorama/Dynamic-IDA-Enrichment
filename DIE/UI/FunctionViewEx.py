@@ -17,7 +17,6 @@ import DIE.Lib.BpHandler
 
 import sark.ui
 
-
 class FunctionView(PluginForm):
     """
     DIE Function View
@@ -38,7 +37,7 @@ class FunctionView(PluginForm):
 
         return PluginForm.Show(self,
                                "Function View",
-                               options=PluginForm.FORM_PERSIST)
+                               options=PluginForm.WOPN_PERSIST)
     def OnCreate(self, form):
         """
         Called when the plugin form is created

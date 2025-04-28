@@ -1,6 +1,7 @@
 import networkx as nx
 import sark
 import sark.qt
+import sark.ui
 from sark.qt import QtGui, QtCore
 import logging
 import logging.handlers as handlers
@@ -12,7 +13,7 @@ from idaapi import plugin_t
 import idaapi
 import idautils
 import idc
-import sark.ui
+import ida_kernwin
 
 from DIE.Lib.IDAConnector import *
 import DIE.Lib.DieConfig
@@ -38,6 +39,9 @@ class DieManager:
     """
     Manage the DIE framework
     """
+
+    initialized = False
+
     def __init__(self, is_dbg_log=True, is_dbg_pause=False, is_dbg_profile=False):
         ### Logging ###
 
@@ -133,9 +137,24 @@ class DieManager:
         self.load_icon("save.png", "save")
         self.load_icon("load.png", "load")
 
-
     ###########################################################################
     # Menu Items
+    def register_menu_action(menu_path: str, menu_id: str, label: str,
+                             handler: idaapi.action_handler_t) -> None:
+        """
+        Register a menu action in IDA.
+
+        Creates and registers an action in IDA's menu system with given handler.
+
+        Args:
+            menu_path (str): Path in menu where action should appear
+            menu_id (str): Unique identifier for the action
+            label (str): Display label for the menu item
+            handler (idaapi.action_handler_t): Handler class for the action
+        """
+        action_desc = idaapi.action_desc_t(menu_id, label, handler, None, label)
+        idaapi.register_action(action_desc)
+        idaapi.attach_action_to_menu(menu_path, menu_id, idaapi.SETMENU_APP)
 
     # Handlers
     class DIE_gohere_Handler(idaapi.action_handler_t):
@@ -294,70 +313,68 @@ class DieManager:
         def update(self, ctx):
             return idaapi.AST_ENABLE_ALWAYS
 
-
     def add_menu_item_helper(self, name, text, tooltip, handler, icon, shortcut):
         description = idaapi.action_desc_t(name, text, handler, shortcut, tooltip, icon)
         idaapi.register_action(description)
-        idaapi.attach_action_to_menu("DIE/" + text, name, idaapi.SETMENU_APP)
+        idaapi.attach_action_to_menu("Edit/DIE/" + text, name, idaapi.SETMENU_APP)
 
         self._menus_names.append(name)
 
     def add_menu_items(self):
-        # Add root level menu
-        idaapi.create_menu("DIE", "DIE")
+        if not self.initialized:
+            self.initialized = True
 
-        # Save DieDB
-        self.add_menu_item_helper("DIE:savedb", "Save DieDB", 'DIE Save DieDB',
-                                  self.DIE_save_db_Handler(self), self.icon_list["save"], '')
+            # Save DieDB
+            self.add_menu_item_helper("DIE:savedb", "Save DieDB", 'DIE Save DieDB',
+                                      self.DIE_save_db_Handler(self), self.icon_list["save"], '')
 
-        # Load DieDB
-        self.add_menu_item_helper("DIE:loaddb", "Load DieDB", 'DIE Load DieDB',
-                                  self.DIE_load_db_Handler(self), self.icon_list["load"], '')
+            # Load DieDB
+            self.add_menu_item_helper("DIE:loaddb", "Load DieDB", 'DIE Load DieDB',
+                                      self.DIE_load_db_Handler(self), self.icon_list["load"], '')
 
-        # Show complete execution CFG
-        self.add_menu_item_helper("DIE:showcfg", "Show CFG", 'DIE Show CFG',
-                                  self.DIE_show_cfg_Handler(self), -1, '')
+            # Show complete execution CFG
+            self.add_menu_item_helper("DIE:showcfg", "Show CFG", 'DIE Show CFG',
+                                      self.DIE_show_cfg_Handler(self), -1, '')
 
             # Mark\Unmark Execution Flow
-        self.add_menu_item_helper("DIE:markexecutionflow", "Mark\\Unmark Execution Flow",
-                                  'DIE Mark\\Unmark Execution Flow', self.DIE_mark_execflow_Handler(self), -1, '')
+            self.add_menu_item_helper("DIE:markexecutionflow", "Mark\\Unmark Execution Flow",
+                                      'DIE Mark\\Unmark Execution Flow', self.DIE_mark_execflow_Handler(self), -1, '')
 
-        # Parser View
-        self.add_menu_item_helper("DIE:parsersview", "Parsers View", 'DIE Parsers View',
-                                  self.DIE_show_parsersview_Handler(self), self.icon_list["plugins"], '')
+            # Parser View
+            self.add_menu_item_helper("DIE:parsersview", "Parsers View", 'DIE Parsers View',
+                                      self.DIE_show_parsersview_Handler(self), self.icon_list["plugins"], '')
 
-        # Exceptions View
-        self.add_menu_item_helper("DIE:exceptionsview", "Exceptions View", 'DIE Exceptions View',
-                                  self.DIE_show_exceptionsview_Handler(self), self.icon_list["exception_view"], '')
+            # Exceptions View
+            self.add_menu_item_helper("DIE:exceptionsview", "Exceptions View", 'DIE Exceptions View',
+                                      self.DIE_show_exceptionsview_Handler(self), self.icon_list["exception_view"], '')
 
-        # Value View
-        self.add_menu_item_helper("DIE:valueview", "Value View", 'DIE Value View',
-                                  self.DIE_show_valview_Handler(self), self.icon_list["value_view"], '')
+            # Value View
+            self.add_menu_item_helper("DIE:valueview", "Value View", 'DIE Value View',
+                                      self.DIE_show_valview_Handler(self), self.icon_list["value_view"], '')
 
-        # Function View
-        self.add_menu_item_helper("DIE:functionview", "Function View", 'DIE Function View',
-                                  self.DIE_show_funcview_Handler(self), self.icon_list["function_view"], '')
+            # Function View
+            self.add_menu_item_helper("DIE:functionview", "Function View", 'DIE Function View',
+                                      self.DIE_show_funcview_Handler(self), self.icon_list["function_view"], '')
 
-        # Debug a custom scope
-        self.add_menu_item_helper("DIE:debugcustomscope", "Debug a custom scope", 'DIE Debug a custom scope',
-                                  self.DIE_goscope_Handler(self), self.icon_list["debug_scope"], 'Ctrl+Alt+c')
+            # Debug a custom scope
+            self.add_menu_item_helper("DIE:debugcustomscope", "Debug a custom scope", 'DIE Debug a custom scope',
+                                      self.DIE_goscope_Handler(self), self.icon_list["debug_scope"], 'Ctrl+Alt+c')
 
-        # Debug entire code
-        self.add_menu_item_helper("DIE:debugentirecode", "Debug entire code", 'DIE Debug entire code',
-                                  self.DIE_goall_Handler(self), self.icon_list["debug_scope"], 'Ctrl+Alt+g')
+            # Debug entire code
+            self.add_menu_item_helper("DIE:debugentirecode", "Debug entire code", 'DIE Debug entire code',
+                                      self.DIE_goall_Handler(self), self.icon_list["debug_scope"], 'Ctrl+Alt+g')
 
-        # Debug from current location
-        self.add_menu_item_helper("DIE:gofromcurrentlocation", "Debug from current location", 'DIE from current location',
-                                  self.DIE_gohere_Handler(self), self.icon_list["debug"], 'Ctrl+Alt+f')
+            # Debug from current location
+            self.add_menu_item_helper("DIE:gofromcurrentlocation", "Debug from current location", 'DIE from current location',
+                                      self.DIE_gohere_Handler(self), self.icon_list["debug"], 'Ctrl+Alt+f')
 
-        # Settings
-        self.add_menu_item_helper("DIE:settings", "Settings", 'DIE Settings',
-                                  self.DIE_show_settings_Handler(self), self.icon_list["settings"], '')
+            # Settings
+            self.add_menu_item_helper("DIE:settings", "Settings", 'DIE Settings',
+                                      self.DIE_show_settings_Handler(self), self.icon_list["settings"], '')
 
-        # About
-        self.add_menu_item_helper("DIE:about", "About", 'DIE About',
-                                  self.DIE_show_about_Handler(self), -1, '')
-
+            # About
+            self.add_menu_item_helper("DIE:about", "About", 'DIE About',
+                                      self.DIE_show_about_Handler(self), -1, '')
 
     def del_menu_items(self):
         for menu_name in self._menus_names:
@@ -397,7 +414,7 @@ class DieManager:
     ###########################################################################
     # DIE DB
     def save_db(self):
-        db_file = idc.AskFile(1, "*.ddb", "Save DIE Db File")
+        db_file = ida_kernwin.ask_file(1, "*.ddb", "Save DIE Db File")
         if db_file is None:
             return
 
@@ -405,7 +422,7 @@ class DieManager:
 
     def load_db(self):
         try:
-            db_file = idc.AskFile(0, "*.ddb", "Load DIE Db File")
+            db_file = ida_kernwin.ask_file(0, "*.ddb", "Load DIE Db File")
             if db_file is not None:
                 self.die_db.load_db(db_file)
 
@@ -442,7 +459,7 @@ class DieManager:
     ###########################################################################
     # About
     def show_about(self):
-        AboutWindow().exec_()
+        AboutWindow()
 
     ###########################################################################
     # Settings View
@@ -519,7 +536,7 @@ class DieManager:
                    '-----------------------------------------------------\n'
                    )
 
-class die_plugin_t(plugin_t):
+class DIEPlugin(idaapi.plugin_t):
     flags = idaapi.PLUGIN_PROC
     comment = "Dynamic IDA Enrichment plugin (aka. DIE)"
     help = "Help is a matter of trust."
@@ -527,31 +544,22 @@ class die_plugin_t(plugin_t):
     wanted_hotkey = ""
 
     def init(self):
+        die_manager = DieManager()
+
         try:
-            # For Debugging:
             #self.die_manager = DieManager(is_dbg_log=True, is_dbg_pause=False, is_dbg_profile=True)
-            self.die_manager = DieManager()
-            self.die_manager.add_menu_items()
-            self.die_manager.show_logo()
+            die_manager.add_menu_items()
+            die_manager.show_logo()
             return idaapi.PLUGIN_KEEP
 
         except Exception as ex:
             idaapi.msg("Failed to initialize DIE. {}\n".format(ex))
             self.die_manager.del_menu_items()
-            del self.die_manager
             idaapi.msg("Errors and fun!\n")
             return idaapi.PLUGIN_SKIP
 
     def run(self, arg):
         pass
 
-    def term(self):
-        if not self.die_manager.die_db.is_saved:
-            response = idc.AskYN(1, "DIE DB was not saved, Would you like to save it now?")
-            if response == 1:
-                self.die_manager.save_db()
-
-        self.die_manager.del_menu_items()
-
 def PLUGIN_ENTRY():
-    return die_plugin_t()
+    return DIEPlugin()

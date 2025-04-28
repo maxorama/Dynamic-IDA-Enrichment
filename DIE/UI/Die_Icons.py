@@ -156,28 +156,10 @@ class DieIcons():
         except:
             return None
 
-
-
 _die_icons = None
 def initlialize():
     global _die_icons
     _die_icons = DieIcons()
 
-
 def get_die_icons():
     return _die_icons
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

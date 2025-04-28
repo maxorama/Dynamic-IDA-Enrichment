@@ -1,5 +1,4 @@
 
-
 import logging
 
 from yapsy.PluginManager import IPlugin
@@ -8,7 +7,6 @@ from DIE.Lib.ParsedValue import ParsedValue
 import idaapi
 from idautils import *
 from idc import *
-
 
 class DataPluginBase(IPlugin):
     """
@@ -37,7 +35,7 @@ class DataPluginBase(IPlugin):
         Plguin Initialization
         @param type_norm_callback: a type name normalization callback function
         """
-        idaapi.msg("Initializing plugin %s\n" % self.__class__)
+        idaapi.msg("[DIE] Initializing plugin %s\n" % self.__class__)
 
         # Set type name normalization callback function
         if type_norm_callback is not None:
@@ -139,7 +137,6 @@ class DataPluginBase(IPlugin):
         except Exception as ex:
             self.logger.exception("Failed to add supported type: %s", ex)
 
-
     def checkSupportedType(self, type):
         """
         Check if a type name string is supported
@@ -189,10 +186,3 @@ class DataPluginBase(IPlugin):
         @return: Parsed value list (with 'ParsedValue' element types)
         """
         return self.parsedValues
-
-
-
-
-
-
-

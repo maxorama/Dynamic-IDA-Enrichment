@@ -2,7 +2,6 @@ import os
 import DIE.Lib.DieConfig
 from PyQt5 import QtGui, QtCore, QtWidgets
 
-
 class AboutWindow(QtWidgets.QDialog):
     def __init__(self):
         super(AboutWindow, self).__init__()
@@ -19,7 +18,7 @@ class AboutWindow(QtWidgets.QDialog):
 
         logo = QtWidgets.QLabel(self)
         logo.setFixedSize(pixmap.size())
-        logo.move(0.5*(self.width() - logo.width()), 20)
+        logo.move(50, 20)
         logo.setPixmap(pixmap)
 
         title = QtWidgets.QLabel("DIE", self)
@@ -54,7 +53,5 @@ class AboutWindow(QtWidgets.QDialog):
         author.setAlignment(QtCore.Qt.AlignCenter)
         author.setFixedWidth(400)
         author.move(0, version.height() + version.y())
-
-
 
         self.show()

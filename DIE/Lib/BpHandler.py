@@ -12,8 +12,6 @@ from DIE.Lib.IDAConnector import *
 from DIE.Lib.DIE_Exceptions import UnrecognizedCallInstruction
 import DIE.Lib.DIEDb
 
-
-
 # Was user breakpoint flag definition
 WAS_USER_BREAKPOINT = 0x1
 
@@ -540,7 +538,6 @@ class BpHandler():
         except Exception as ex:
             logging.exception("Failed while saving exception data to db: %s", ex)
             return False
-
 
 ################# [ Singleton ] ######################
 _bp_handler = BpHandler()

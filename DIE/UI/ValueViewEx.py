@@ -7,7 +7,6 @@ import idc
 import DIE.Lib.DIEDb
 import DIE.UI.FunctionViewEx
 
-
 class ValueView(idaapi.PluginForm):
     """
     DIE Value View
@@ -24,7 +23,7 @@ class ValueView(idaapi.PluginForm):
 
         return idaapi.PluginForm.Show(self,
                                "Value View",
-                               options=idaapi.PluginForm.FORM_PERSIST)
+                               options=idaapi.PluginForm.WOPN_PERSIST)
 
     def OnCreate(self, form):
         """
