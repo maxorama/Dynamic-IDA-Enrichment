@@ -1,5 +1,4 @@
 
-
 import logging
 from DIE.Lib.IDATypeWrapers import Function, FuncArg
 from DIE.Lib.DebugValue import *
@@ -11,14 +10,11 @@ class FunctionParserBase(object):
     Base class for function parsers.
     Provides all functionality required to parse function arguments.
     """
-
     def __init__(self, function):
         """
-
         @param function: a
         @raise TypeError:
         """
-
         self.logger = logging.getLogger(__name__)
         self.dataParser = DataParser.getParser()    # Data Parser (ParserDataPlugin Manager) instance
 
@@ -97,7 +93,6 @@ class FunctionParserBase(object):
         @param parser_name: the parser name to retrieve
         @return: if parser was found returns a DataParser plugin object. otherwise returns None.
         """
-
         if parser_name is None:
             return None
 
@@ -220,7 +215,6 @@ class FunctionParserBase(object):
         @param name: Argument name
         @return: DebugValue object containing the current argument value. Returns None on failure
         """
-
         parser = None
 
         # Lookup a specific argument parser for this argument

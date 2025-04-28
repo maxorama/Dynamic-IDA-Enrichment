@@ -1,7 +1,6 @@
 
 MAX_SCORE = 10
 
-
 class ParsedValue():
     """
     Possible run-time value.

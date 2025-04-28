@@ -12,7 +12,6 @@ class StaticImports():
     """
     Contains static data of the IAT
     """
-
     def __init__(self):
         #self.logger = logging.getLogger(__name__)
 
@@ -114,7 +113,6 @@ class DbgImports():
     """
     DbgImports contains the names, ordinals and addresses of all imported functions as allocated at runtime.
     """
-
     def __init__(self):
         """
         Ctor
@@ -206,17 +204,3 @@ class DbgImports():
         for dbgImp in self.rt_import_table:
             (module_name, ea, name, ord) = self.rt_import_table[dbgImp]
             idaapi.msg("ModuleName - %s,\t\tFunctionName - %s,\t\t Address in IAT - %s,\t\t Real address - %s\n" % (module_name, name, hex(ea), hex(dbgImp)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-

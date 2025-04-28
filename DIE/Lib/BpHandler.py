@@ -28,7 +28,6 @@ class BpHandler():
     """
 
     def __init__(self):
-
         self.logger = logging.getLogger(__name__)
 
         self.iat = StaticImports()              # Static IAT
@@ -71,8 +70,8 @@ class BpHandler():
         Set breakpoints on all CALL and RET instructions in all of the executable sections.
         """
         for seg_ea in idautils.Segments():
-            for head in idautils.Heads(seg_ea, idc.SegEnd(seg_ea)):
-                if idc.isCode(idc.GetFlags(head)):
+            for head in idautils.Heads(seg_ea, idc.get_segm_end(seg_ea)):
+                if idc.is_code(idc.get_func_flags(head)):
                     # Add BP if instruction is a CALL
                     if is_call(head):
                         self.addBP(head)
@@ -88,11 +87,11 @@ class BpHandler():
                 if bp_flags & WAS_USER_BREAKPOINT:
                     return
 
-                idc.DelBpt(ea)  # Remove breakpoint
+                idc.del_bpt(ea)  # Remove breakpoint
 
             # Remove all return breakpoints
             for ea in self.ret_bps:
-                idc.DelBpt(ea)
+                idc.del_bpt(ea)
 
             self.die_db.bp_list.clear()  # Clear the breakpoint list.
             self.ret_bps.clear()         # Clear the return breakpoint list
@@ -112,7 +111,7 @@ class BpHandler():
         @return: True if breakpoint was added, otherwise False. Returns -1 if an error occurred.
         """
         try:
-            if idc.CheckBpt(ea) > 0:
+            if idc.check_bpt(ea) > 0:
                 # If our breakpoint already exist
                 if ea in self.die_db.bp_list:
                     return False
@@ -124,7 +123,7 @@ class BpHandler():
                     return False
                 # TODO: better replace with a named tuple.
                 self.die_db.bp_list[ea] = (0, bp_description)
-                idc.AddBpt(ea)
+                idc.add_bpt(ea)
 
             return True
 
@@ -146,7 +145,7 @@ class BpHandler():
             if bp_flags & WAS_USER_BREAKPOINT:
                 return True
 
-            idc.DelBpt(ea)           # Remove breakpoint
+            idc.del_bpt(ea)           # Remove breakpoint
             self.die_db.bp_list.pop(ea)     # Remove from breakpoint list
 
             return True
@@ -167,11 +166,11 @@ class BpHandler():
             self.logger.error("The instruction at address %s is not recognized as a CALL instruction", hex(ea))
             raise UnrecognizedCallInstruction()
 
-        next_inst = idc.NextHead(ea)
+        next_inst = idc.next_head(ea)
 
         # Add breakpoint on next instruction
         if next_inst not in self.ret_bps:
-            idc.AddBpt(next_inst)
+            idc.add_bpt(next_inst)
             self.ret_bps[next_inst] = 0
             return True
 
@@ -184,7 +183,7 @@ class BpHandler():
         @return: True if breakpoint was successfully removed, otherwise return False
         """
         if ea in self.ret_bps:
-            idc.DelBpt(ea)
+            idc.del_bpt(ea)
             del self.ret_bps[ea]
             return True
 
@@ -433,11 +432,11 @@ class BpHandler():
             func_name = None
             call_dest = None
 
-            if idc.isCode(idc.GetFlags(ea)):
+            if idc.is_code(idc.get_func_flags(ea)):
                 if is_call(ea):
-                    operand_type = idc.GetOpType(ea, 0)
+                    operand_type = idc.get_operand_type(ea, 0)
                     if operand_type in (5, 6, 7, 2):
-                        call_dest = idc.GetOperandValue(ea, 0)  # Call destination
+                        call_dest = idc.get_operand_value(ea, 0)  # Call destination
                         func_name = get_function_name(call_dest).lower()
 
             return call_dest, func_name
@@ -476,7 +475,7 @@ class BpHandler():
 
             # Walk function and place breakpoints on every call instruction found.
             for head in idautils.Heads(start_adrs, end_adrs):
-                if idc.isCode(idc.GetFlags(head)):
+                if idc.is_code(idc.get_func_flags(head)):
                     # Add BP if instruction is a CALL
                     if is_call(head):
                         self.addBP(head)

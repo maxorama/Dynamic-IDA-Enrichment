@@ -1,5 +1,8 @@
 import sark
 import idaapi
+import ida_nalt
+import ida_typeinf
+
 import logging
 import DIE.Lib.DIE_Exceptions
 from DIE.Lib.IDAConnector import get_native_size, regOffsetToName,\
@@ -251,8 +254,8 @@ class Function():
         isGuessed = False  # Is function prototype guessed
 
         # Get function type info
-        if not idaapi.get_tinfo2(self.proto_ea, self.typeInfo):
-            idaapi.guess_tinfo2(self.proto_ea, self.typeInfo)
+        if not ida_nalt.get_tinfo(self.typeInfo, self.proto_ea):
+            ida_typeinf.guess_tinfo(self.typeInfo, self.proto_ea)
             isGuessed = True
 
         if self.typeInfo.empty():
@@ -373,7 +376,6 @@ class Struct():
             self.logger.exception("Error while extracting Struct data: %s",
                           idaapi.print_tinfo('', 0, 0, idaapi.PRTYPE_1LINE, type, '', ''), ex)
             return False
-
 
     def getStructData(self):
         """

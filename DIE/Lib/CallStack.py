@@ -149,9 +149,3 @@ class CallStack():
         except Exception as ex:
             self.logger.exception("Error while retrieving function data for top-of-call-stack item:", ex)
             return None
-
-
-
-
-
-

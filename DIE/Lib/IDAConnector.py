@@ -2,7 +2,11 @@ import sark
 import idc
 import idaapi
 import idautils
+import ida_ida
+import ida_bytes
+import ida_xref
 import re
+
 from sark.debug import Registers
 
 ################################################################
@@ -21,17 +25,17 @@ def get_function_name(ea):
         Get the real function name
         """
         # Try to demangle
-        function_name = idc.Demangle(idc.GetFunctionName(ea), idc.GetLongPrm(idc.INF_SHORT_DN))
+        function_name = idc.demangle_name(idc.get_func_name(ea), idc.get_inf_attr(idc.INF_SHORT_DN))
 
         if function_name:
             function_name = function_name.split("(")[0]
 
         # Function name is not mangled
         if not function_name:
-            function_name = idc.GetFunctionName(ea)
+            function_name = idc.get_func_name(ea)
 
         if not function_name:
-            function_name = idc.Name(ea)
+            function_name = idc.get_name(ea)
 
         # If we still have no function name, make one up. Format is - 'UNKN_FNC_4120000'
         if not function_name:
@@ -49,7 +53,7 @@ def get_function_start_address(ea):
         if ea is None:
             return None
 
-        start_adrs = idc.GetFunctionAttr(ea, idc.FUNCATTR_START)
+        start_adrs = idc.get_func_attr(ea, idc.FUNCATTR_START)
         if start_adrs != idc.BADADDR:
             return start_adrs
 
@@ -68,11 +72,11 @@ def get_function_end_address(ea):
         if ea is None:
             return None
 
-        func_attr_end = idc.GetFunctionAttr(ea, idc.FUNCATTR_END)
+        func_attr_end = idc.get_func_attr(ea, idc.FUNCATTR_END)
         if func_attr_end == idc.BADADDR:
             return None
 
-        return idc.PrevHead(func_attr_end, ea)
+        return idc.prev_head(func_attr_end, ea)
 
     except Exception as ex:
         raise RuntimeError("Count not locate end address for function %s: %s" % (hex(ea), ex))
@@ -85,17 +89,15 @@ def get_functions():
     """
     return {get_function_name(func_ea): func_ea for func_ea in idautils.Functions()}
 
-
 def get_native_size():
     """
     Get the native OS size
     @return: 16, 32, 64 value indicating the native size or None if failed.
     """
     try:
-        inf = idaapi.get_inf_structure()
-        if inf.is_32bit():
+        if ida_ida.inf_is_32bit_exactly():
             return 32
-        elif inf.is_64bit():
+        elif ida_ida.inf_is_64bit():
             return 64
         else:
             # Native size is neither 32 or 64 bit. assuming 16 bit.
@@ -110,8 +112,7 @@ def get_proc_type():
     @return: Returns the processor type or None on failure.
     """
     try:
-        inf = idaapi.get_inf_structure()
-        return inf.procName()
+        return ida_ida.inf_get_procname()
 
     except Exception as ex:
         raise RuntimeError("Could not retrieve processor type: %s" %ex)
@@ -132,32 +133,32 @@ def get_cur_ea():
     """
     Return the current effective address
     """
-    return idc.GetRegValue(Registers().ip.name)
+    return idc.get_reg_value(Registers().ip.name)
 
 def get_sp():
     """
     Get the current stack pointer address
     """
-    return idc.GetRegValue(Registers().sp.name)
+    return idc.get_reg_value(Registers().sp.name)
 
 def get_adrs_mem(ea):
     """
     Get the memory at address according to native size (16, 32 or 64 bit)
     """
     # Verify EA
-    if not idc.isEnabled(ea):
+    if not ida_bytes.is_mapped(ea):
         return None
 
     nativeSize = get_native_size()
 
     if nativeSize == 16:
-        return idc.DbgWord(ea)
+        return idc.read_dbg_word(ea)
 
     if nativeSize == 32:
-        return idc.DbgDword(ea)
+        return idc.read_dbg_dword(ea)
 
     if nativeSize == 64:
-        return idc.DbgQword(ea)
+        return idc.read_dbg_qword(ea)
 
 # Ask hex-rays how can this be done a bit more gracefully..
 def regOffsetToName(offset):
@@ -227,7 +228,7 @@ def add_call_xref(frm, to):
     @param to: EA of To Address (The called funciton address)
     @return: True if XREF was added successfully, otherwise False
     """
-    return idc.AddCodeXref(frm, to, 0x31)
+    return ida_xref.add_cref(frm, to, 0x31)
 
 def is_call_xref(frm, to):
     """
@@ -249,7 +250,7 @@ def is_system_lib(ea):
     @param ea: an effective address within a function
     """
 
-    name = idc.SegName(ea)
+    name = idc.get_segm_name(ea)
 
     if not name:
         return False
@@ -258,18 +259,16 @@ def is_system_lib(ea):
     if name == 'nt':
         return True
 
-    sysfolders = [re.compile("\\\\windows\\\\", re.I), re.compile("\\\\Program Files ", re.I), re.compile("/usr/", re.I), \
-                  re.compile("/system/", re.I), re.compile("/lib/", re.I)]
+    sysfolders = [re.compile("\\\\windows\\\\", re.I), re.compile("\\\\Program Files ", re.I), re.compile("/usr/", re.I), re.compile("/system/", re.I), re.compile("/lib/", re.I)]
 
-    m = idc.GetFirstModule()
+    m = idc.get_first_module()
     while m:
-        path = idc.GetModuleName(m)
+        path = idc.get_module_name(m)
         if re.search(name, path):
             if any(regex.search(path) for regex in sysfolders):
                 return True
             else:
                 return False
-        m = idc.GetNextModule(m)
+        m = idc.get_next_module(m)
 
     return False
-

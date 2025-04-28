@@ -18,11 +18,13 @@ from idc import *
 ### DIE Imports###
 import DIE.Lib.DieConfig
 import DIE.Lib.DataParser
-from DIE.Lib.DIE_Exceptions import FuncCallExceedMax, DieCallStackPopError, DieThunkFunctionDetected
+import DIE.Lib.DIEDb
+import DIE.Lib.BpHandler
+
+from DIE.Lib.DIE_Exceptions import DieThunkFunctionDetected
 from DIE.Lib.CallStack import *
 from DIE.Lib.DbgImports import *
-from DIE.Lib.IDAConnector import get_cur_ea, is_call, is_ida_debugger_present, is_system_lib
-import DIE.Lib.DIEDb
+from DIE.Lib.IDAConnector import get_cur_ea, is_call, is_ida_debugger_present
 
 ##########################
 ####     Defines      ####

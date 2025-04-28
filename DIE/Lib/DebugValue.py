@@ -1,8 +1,8 @@
 import sark
-from DIE.Lib import DieConfig, DataParser
-
 import idaapi
 from idc import *
+
+from DIE.Lib import DieConfig, DataParser
 from DIE.Lib.IDATypeWrapers import Array, Struct
 from DIE.Lib.IDAConnector import get_adrs_mem
 import logging

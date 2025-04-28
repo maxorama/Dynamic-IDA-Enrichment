@@ -1,5 +1,4 @@
 
-
 class dbFuncArg():
     """
     Function Argument
@@ -90,12 +89,10 @@ class dbFunction_Context():
     def __repr__(self):
         return "<dbFunction_Context(id=%s, parent_id=%s)>" % (self.id, self.parent_func_ctxt_id)
 
-
 class dbDebug_Values():
     """
     Dynamically Acquired Values
     """
-
     def __init__(self, raw_value, type_name, name, is_definitely_parsed, deref_depth):
 
         self.raw_value = raw_value
@@ -120,7 +117,6 @@ class dbParsed_Value():
     """
     Dynamically Parsed Value
     """
-
     def __init__(self, data, description, raw_val, score, type):
 
         self.data = data
@@ -173,7 +169,6 @@ class dbRun_Info():
     """
     Runtime Info
     """
-
     def __init__(self, start_time, end_time, filename, md5):
 
         self.start_time = start_time
@@ -182,20 +177,3 @@ class dbRun_Info():
         self.md5 = md5
 
         self.threads = []      # TODO: LINK TO dbThreads
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

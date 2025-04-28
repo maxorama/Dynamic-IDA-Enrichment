@@ -13,7 +13,6 @@ from DIE.Lib import DIEDb
 
 db = DIEDb.get_db()  # A global DIE database instance
 
-
 def does_return_string(function):
     """
     Check if a function returns a string.
@@ -29,7 +28,6 @@ def does_return_string(function):
                     return True
     return False
 
-
 def get_all_functions_returning_strings(functions):
     """
     Get all functions with string in return values
@@ -42,7 +40,6 @@ def get_all_functions_returning_strings(functions):
             fs.append(f)
     return fs
 
-
 def get_most_called_n(functions, n):
     """
     Get the n`th most called functions
@@ -54,7 +51,6 @@ def get_most_called_n(functions, n):
     sorted_funcs = sorted(call_counts, key=lambda x: x[1], reverse=True)
     return [count[0] for count in sorted_funcs[:n]]
 
-
 def get_non_lib(functions):
     """
     Get all non-library functions
@@ -62,7 +58,6 @@ def get_non_lib(functions):
     @return: a subset list of db_DataTypes.dbFunction objects that are not library functions.
     """
     return [f for f in functions if not f.is_lib_func]
-
 
 def sort_by_xrefs(functions):
     """
@@ -78,8 +73,6 @@ def sort_by_xrefs(functions):
             pass
     sorted_funcs = sorted(xref_counts, key=lambda x: x[1], reverse=True)
     return [count[0] for count in sorted_funcs]
-
-
 
 # no_lib_funcs = get_non_lib(functions)
 # funcs_returning_strings = get_all_functions_returning_strings(no_lib_funcs)

@@ -12,7 +12,6 @@ class DataPluginBase(IPlugin):
     """
     DIE Data Parser plugin base class.
     """
-
     name = ""
     version = 0
     description = ""

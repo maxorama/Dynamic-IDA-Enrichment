@@ -1,5 +1,4 @@
 
-
 from DIE.Lib.DataPluginBase import DataPluginBase
 import logging
 import idaapi

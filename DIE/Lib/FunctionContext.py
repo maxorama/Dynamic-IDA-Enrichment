@@ -181,7 +181,7 @@ class FunctionContext():
 
         except DIE.Lib.DIE_Exceptions.DieNoFunction as ex:
             self.logger.debug("Trying to define a new function at address: %s", hex(ea))
-            if MakeFunction(ea, BADADDR):
+            if ida_funcs.add_func(ea, BADADDR):
                 self.logger.info("New function was defined at: %s", hex(ea))
 
                 func_start_adrs = get_function_start_address(ea)

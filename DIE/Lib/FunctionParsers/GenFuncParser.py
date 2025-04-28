@@ -1,5 +1,4 @@
 
-
 import logging
 from DIE.Lib.FunctionParsers.FunctionParserBase import FunctionParserBase
 
@@ -29,8 +28,3 @@ class GenericFunctionParser(FunctionParserBase):
         except Exception as ex:
             self.logger.error("Error while parsing function: %s", ex)
             return None
-
-
-
-
-
