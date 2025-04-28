@@ -1,5 +1,4 @@
 
-
 #########################
 #### General Imports ####
 #########################
@@ -36,7 +35,6 @@ class DebugHooker(DBG_Hooks):
     IDA Debug hooking functionality
     """
     def __init__(self, is_dbg_pause=False, is_dbg_profile=False, is_dyn_bp=False):
-
         try:
             self.logger = logging.getLogger(__name__)
             self.config = DIE.Lib.DieConfig.get_config()
@@ -84,7 +82,6 @@ class DebugHooker(DBG_Hooks):
         """
         Hook to IDA Debugger
         """
-
         if self.isHooked:   # Release any current hooks
             self.logger.debug("Debugger is already hooked, releasing previous hook.")
             self.UnHook()

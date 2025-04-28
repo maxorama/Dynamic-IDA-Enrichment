@@ -71,7 +71,8 @@ class BpHandler():
         """
         for seg_ea in idautils.Segments():
             for head in idautils.Heads(seg_ea, idc.get_segm_end(seg_ea)):
-                if idc.is_code(idc.get_func_flags(head)):
+                print("[DIE] head = " + str(head))
+                if ida_bytes.is_code(idc.get_func_flags(head)):
                     # Add BP if instruction is a CALL
                     if is_call(head):
                         self.addBP(head)
@@ -432,7 +433,7 @@ class BpHandler():
             func_name = None
             call_dest = None
 
-            if idc.is_code(idc.get_func_flags(ea)):
+            if ida_bytes.is_code(idc.get_func_flags(ea)):
                 if is_call(ea):
                     operand_type = idc.get_operand_type(ea, 0)
                     if operand_type in (5, 6, 7, 2):
@@ -475,7 +476,7 @@ class BpHandler():
 
             # Walk function and place breakpoints on every call instruction found.
             for head in idautils.Heads(start_adrs, end_adrs):
-                if idc.is_code(idc.get_func_flags(head)):
+                if ida_bytes.is_code(idc.get_func_flags(head)):
                     # Add BP if instruction is a CALL
                     if is_call(head):
                         self.addBP(head)
