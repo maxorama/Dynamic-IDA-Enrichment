@@ -176,7 +176,7 @@ class ValueView(idaapi.PluginForm):
             row = item.row()
             column_num = parent.columnCount()
 
-            for column in xrange(0, column_num):
+            for column in range(0, column_num):
                 if self.valueModel.hasIndex(row, column, parent.index()):
                     cur_index = self.valueModel.index(row, column, parent.index())
 
@@ -244,7 +244,6 @@ class ValueView(idaapi.PluginForm):
 #
 ###############################################################################################
 
-
     #@QtCore.Slot(QtCore.QModelIndex)
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def itemDoubleClickSlot(self, index):
@@ -284,13 +283,11 @@ class ValueView(idaapi.PluginForm):
         valuetypeProxyModel.setSourceModel(self.valueModel)
         self.valueTreeView.setModel(valuetypeProxyModel)
 
-
 # Singelton
 _value_view = None
 def initialize():
     global _value_view
     _value_view = ValueView()
-
 
 def get_view():
     return _value_view

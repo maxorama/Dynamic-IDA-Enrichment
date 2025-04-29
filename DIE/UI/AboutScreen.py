@@ -18,7 +18,7 @@ class AboutWindow(QtWidgets.QDialog):
 
         logo = QtWidgets.QLabel(self)
         logo.setFixedSize(pixmap.size())
-        logo.move(50, 20)
+        logo.move(int(0.5*(self.width() - logo.width())), 20)
         logo.setPixmap(pixmap)
 
         title = QtWidgets.QLabel("DIE", self)
@@ -38,7 +38,7 @@ class AboutWindow(QtWidgets.QDialog):
         subtitle.setFixedWidth(400)
         subtitle.move(0, title.height() + title.y() + 10)
 
-        version = QtWidgets.QLabel("Version 0.1", self)
+        version = QtWidgets.QLabel("Version 1.0", self)
         font = subtitle.font()
         font.setPointSize(12)
         version.setFont(font)
@@ -46,7 +46,7 @@ class AboutWindow(QtWidgets.QDialog):
         version.setFixedWidth(400)
         version.move(0, subtitle.height() + subtitle.y() + 30)
 
-        author = QtWidgets.QLabel("Written by Yaniv Balmas @ynvb - Check Point Software Technologies",self)
+        author = QtWidgets.QLabel("Written by Yaniv Balmas @ynvb (Modified by Max)",self)
         font = subtitle.font()
         font.setPointSize(10)
         author.setFont(font)

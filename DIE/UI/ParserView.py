@@ -72,8 +72,6 @@ class ParserView(PluginForm):
             root_item.insertChild(row, current_row_item)
             row += 1
 
-
-
 _parser_view = None
 def initialize():
     global _parser_view

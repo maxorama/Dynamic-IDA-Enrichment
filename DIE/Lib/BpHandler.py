@@ -19,7 +19,7 @@ WAS_USER_BREAKPOINT = 0x1
 STARTS_WITH = 0
 ENDS_WITH = 1
 CONTAINS = 2
-
+    
 class BpHandler():
     """
     Main breakpoint handling class.

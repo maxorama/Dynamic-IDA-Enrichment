@@ -4,7 +4,6 @@ from idaapi import PluginForm
 from DIE.Lib import BpHandler
 import DIE.UI.Die_Icons
 
-
 class BreakpointView(PluginForm):
     """
     DIE Value View

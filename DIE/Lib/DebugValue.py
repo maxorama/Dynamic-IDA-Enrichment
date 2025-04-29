@@ -11,7 +11,6 @@ from DIE.Lib.ParsedValue import ParsedValue, MAX_SCORE
 MEM_VAL = 0x01  # Memory based value
 REG_VAL = 0x02  # Register based value
 
-
 class DebugValue():
     """
     DebugValue class is responsible for reading the argument value.
