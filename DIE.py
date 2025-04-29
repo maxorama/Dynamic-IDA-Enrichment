@@ -63,11 +63,10 @@ class DieManager:
         self.logger = logging.getLogger(__name__)
 
         ### DIE Configuration ###
-        self.config_file_name = os.path.join(os.getcwd(), "DIE.cfg")
         DIE.Lib.DieConfig.initialize()
         config = DIE.Lib.DieConfig.get_config()
         try:
-            config.load(self.config_file_name)
+            config.load()
         except IOError:
             pass
 
@@ -463,7 +462,7 @@ class DieManager:
     ###########################################################################
     # Settings View
     def show_settings(self):
-        DIE.UI.SetupView.Show(self.config_file_name)
+        DIE.UI.SetupView.Show()
 
     ###########################################################################
     # Show DB Details
@@ -479,10 +478,10 @@ class DieManager:
          num_of_threads,
          numof_parsed_val) = self.die_db.get_run_info()
 
-        idaapi.msg("Die DB Loaded.\n")
-        idaapi.msg("Start Time: %s, End Time %s\n" % (ctime(start_time), ctime(end_time)))
-        idaapi.msg("Functions: %d, Threads: %d\n" % (num_of_functions, num_of_threads))
-        idaapi.msg("Parsed Values: %d\n" % numof_parsed_val)
+        idaapi.msg("[DIE] Die DB Loaded.\n")
+        idaapi.msg("[DIE] Start Time: %s, End Time %s\n" % (ctime(start_time), ctime(end_time)))
+        idaapi.msg("[DIE] Functions: %d, Threads: %d\n" % (num_of_functions, num_of_threads))
+        idaapi.msg("[DIE] Parsed Values: %d\n" % numof_parsed_val)
 
     ###########################################################################
     # Mark\Unmark Execution Flow
@@ -516,7 +515,7 @@ class DieManager:
         graph = nx.DiGraph()
 
         if not cfg:
-            idaapi.msg("No CFG to display")
+            idaapi.msg("[DIE] No CFG to display")
             return
 
         for ctxt_node in cfg:

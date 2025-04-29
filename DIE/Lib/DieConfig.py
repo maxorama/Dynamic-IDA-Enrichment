@@ -10,9 +10,14 @@ from attrdict import AttrMap
 
 class DIEConfig(object):
     DEFAULT = os.path.join(os.path.dirname(__file__), "config.yml")
+    CUSTOM = os.path.join(os.path.dirname(__file__), "DIE.yml")
 
     def __init__(self):
-        with open(self.DEFAULT, "rb") as f:
+        path = self.DEFAULT
+        if os.path.exists(self.CUSTOM):
+            path = self.CUSTOM
+
+        with open(path, "rt") as f:
             default = yaml.safe_load(f)
 
         self._config = AttrMap(default)
@@ -29,8 +34,12 @@ class DIEConfig(object):
     def parser_path(self):
         return self.install_path + "/Plugins/DataParsers" if platform.system() == "Linux" else self.install_path + "\\Plugins\\DataParsers"
 
-    def load(self, path):
-        with open(path, "rb") as f:
+    def load(self):
+        path = self.DEFAULT
+        if os.path.exists(self.CUSTOM):
+            path = self.CUSTOM
+
+        with open(path, "rt") as f:
             custom = yaml.safe_load(f)
 
         custom = AttrMap(custom)
@@ -39,8 +48,8 @@ class DIEConfig(object):
             if attr in custom:
                 self._config[attr].update(custom[attr])
 
-    def save(self, path):
-        with open(path, "wb") as f:
+    def save(self):
+        with open(self.CUSTOM, "wt") as f:
             yaml.safe_dump(dict(self._config), f, default_flow_style=False)
 
     def __getattr__(self, name):

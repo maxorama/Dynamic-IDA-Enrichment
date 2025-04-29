@@ -37,7 +37,7 @@ class SettingsView(Form):
         """Do nothing, we will handle events in the form callback"""
         pass
 
-def Show(config_filename):
+def Show():
     die_config = DIE.Lib.DieConfig.get_config()
 
     settings = SettingsView()
@@ -75,7 +75,7 @@ def Show(config_filename):
 
         die_config.function_context.get_func_args = settings.rArgs.checked
 
-        print(settings.iMaxFuncCall.value)
-        print(settings.iDerefDepth.value)
+#        print(settings.iMaxFuncCall.value)
+#        print(settings.iDerefDepth.value)
 
-        die_config.save(config_filename)
+        die_config.save()

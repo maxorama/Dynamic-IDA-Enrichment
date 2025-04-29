@@ -232,7 +232,7 @@ class DIE_DB():
             return 0
 
         if not isinstance(function, dbFunction):
-            raise ValueError("dbFunction type is expected. Got %s." % function.__class__)
+            raise ValueError("[DIE] dbFunction type is expected. Got %s." % function.__class__)
 
         if thread_id is None:
             return len(function.function_contexts)
@@ -306,7 +306,7 @@ class DIE_DB():
         """
 
         if not isinstance(value, dbParsed_Value):
-            raise TypeError("Expected type dbParsed_Value but got type: %s" % value.__class__)
+            raise TypeError("[DIE] Expected type dbParsed_Value but got type: %s" % value.__class__)
 
         func_context_list = []
 
@@ -476,7 +476,7 @@ class DIE_DB():
             return True
 
         except Exception as ex:
-            self.logger.exception("Error while loading RunInfo data into DieDB: %s", ex)
+            self.logger.exception("[DIE] Error while loading RunInfo data into DieDB: %s", ex)
 
     def add_thread_data(self, thread_num, call_tree):
         """
@@ -500,7 +500,7 @@ class DIE_DB():
             return thread_id
 
         except Exception as ex:
-            self.logger.exception("Error while loading thread-%d to DieDB: %s", thread_num, ex)
+            self.logger.exception("[DIE] Error while loading thread-%d to DieDB: %s", thread_num, ex)
 
     def add_function_context(self, function_context, thread_id):
         """
@@ -549,7 +549,7 @@ class DIE_DB():
             return function_context.id
 
         except Exception as ex:
-            self.logger.exception("Error while adding function %s to DieDB: %s", function_context.function.funcName, ex)
+            self.logger.exception("[DIE] Error while adding function %s to DieDB: %s", function_context.function.funcName, ex)
 
     def add_function(self, function, func_context_id):
         """
@@ -585,7 +585,7 @@ class DIE_DB():
             return func_id
 
         except Exception as ex:
-            self.logger.exception("Error while loading function %s into DieDB: %s", function.funcName ,ex)
+            self.logger.exception("[DIE] Error while loading function %s into DieDB: %s", function.funcName ,ex)
 
     def add_func_arg(self, func_arg):
         """
@@ -603,7 +603,7 @@ class DIE_DB():
             return arg_id
 
         except Exception as ex:
-            self.logger.exception("Error while loading function argument %s into DieDB: %s", func_arg.argname, ex)
+            self.logger.exception("[DIE] Error while loading function argument %s into DieDB: %s", func_arg.argname, ex)
 
     def add_debug_value(self, debug_value, func_context_id, ref_blink_id=None):
         """
@@ -656,7 +656,7 @@ class DIE_DB():
             return dbg_val_id
 
         except Exception as ex:
-            self.logger.exception("Error while loading DebugValue to DieDB: %s", ex)
+            self.logger.exception("[DIE] Error while loading DebugValue to DieDB: %s", ex)
 
     def add_parsed_val(self, parsed_val):
         """
@@ -724,8 +724,8 @@ class DIE_DB():
             return True
 
         except Exception as ex:
-            idaapi.msg("Error while saving DIE DB: %s\n" % ex)
-            logging.exception("Error while saving DIE DB: %s", ex)
+            idaapi.msg("[DIE] Error while saving DIE DB: %s\n" % ex)
+            logging.exception("[DIE] Error while saving DIE DB: %s", ex)
             return False
 
     def load_db(self, file_name=None):
@@ -738,7 +738,7 @@ class DIE_DB():
             file_name = self.get_default_db_filename()
 
         if not os.path.exists(file_name):
-            raise IOError("DIE DB file not found")
+            raise IOError("[DIE] DIE DB file not found")
 
         in_file = open(file_name, 'rb')
 
@@ -747,7 +747,7 @@ class DIE_DB():
         # Validate db MD5
         db_md5 = db_tables[0].md5
         if db_md5 != idautils.GetInputFileMD5():
-            raise DbFileMismatch("Db File is different then currently analyzed file")
+            raise DbFileMismatch("[DIE] Db File is different then currently analyzed file")
 
         self.run_info = db_tables[0]
         self.functions = db_tables[1]
