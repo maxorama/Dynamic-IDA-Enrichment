@@ -19,7 +19,7 @@ WAS_USER_BREAKPOINT = 0x1
 STARTS_WITH = 0
 ENDS_WITH = 1
 CONTAINS = 2
-    
+
 class BpHandler():
     """
     Main breakpoint handling class.
@@ -71,12 +71,14 @@ class BpHandler():
         """
         for seg_ea in idautils.Segments():
             for head in idautils.Heads(seg_ea, idc.get_segm_end(seg_ea)):
-                print("[DIE] head = " + str(head))
-                if ida_bytes.is_code(idc.get_func_flags(head)):
-                    # Add BP if instruction is a CALL
-                    if is_call(head):
-                        self.addBP(head)
-
+                try:
+                    if ida_bytes.is_code(idc.get_func_flags(head)):
+                        # Add BP if instruction is a CALL
+                        if is_call(head):
+                            self.addBP(head)
+                except:
+                    pass
+    
     def unsetBPs(self):
         """
         Remove all DIE set BreakPoints

@@ -11,8 +11,8 @@ Dynamic IDA Enrichment (aka. DIE)
 https://github.com/ynvb/DIE
 
 ### Modification
-
 Add support for IDA >= 8.x
+Python 2.x -> 3.x
 
 ### What is it?
 
