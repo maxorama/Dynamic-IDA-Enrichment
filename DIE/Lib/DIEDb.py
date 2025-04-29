@@ -42,7 +42,6 @@ class DIE_DB():
         self.excluded_bp_ea = []            # A list of excluded breakpoint addresses
         self.excluded_funcNames_part = []   # A list of excluded partial function names
 
-
     #############################################################################
     # Retrieve database items
     #############################################################################

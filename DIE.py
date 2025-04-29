@@ -39,7 +39,6 @@ class DieManager:
     """
     Manage the DIE framework
     """
-
     initialized = False
 
     def __init__(self, is_dbg_log=True, is_dbg_pause=False, is_dbg_profile=False):
@@ -137,23 +136,6 @@ class DieManager:
         self.load_icon("load.png", "load")
 
     ###########################################################################
-    # Menu Items
-    def register_menu_action(menu_path: str, menu_id: str, label: str,
-                             handler: idaapi.action_handler_t) -> None:
-        """
-        Register a menu action in IDA.
-
-        Creates and registers an action in IDA's menu system with given handler.
-
-        Args:
-            menu_path (str): Path in menu where action should appear
-            menu_id (str): Unique identifier for the action
-            label (str): Display label for the menu item
-            handler (idaapi.action_handler_t): Handler class for the action
-        """
-        action_desc = idaapi.action_desc_t(menu_id, label, handler, None, label)
-        idaapi.register_action(action_desc)
-        idaapi.attach_action_to_menu(menu_path, menu_id, idaapi.SETMENU_APP)
 
     # Handlers
     class DIE_gohere_Handler(idaapi.action_handler_t):

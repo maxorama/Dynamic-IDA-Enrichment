@@ -7,8 +7,8 @@ class ParserView(PluginForm):
     DIE Value View
     """
     def __init__(self):
-
         super(ParserView, self).__init__()
+
         self.data_parser = None
         self.ptable_widget = None
 
@@ -73,6 +73,7 @@ class ParserView(PluginForm):
             row += 1
 
 _parser_view = None
+
 def initialize():
     global _parser_view
     _parser_view = ParserView()

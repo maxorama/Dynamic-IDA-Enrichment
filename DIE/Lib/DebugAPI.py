@@ -75,7 +75,7 @@ class DebugHooker(DBG_Hooks):
             self.pr = None                                  # Profiling object (for debug only)
 
         except Exception as ex:
-            self.logger.exception("Failed to initialize DebugAPI: %s", ex)
+            self.logger.exception("[DIE] Failed to initialize DebugAPI: %s", ex)
             return
 
     def Hook(self):
@@ -83,20 +83,20 @@ class DebugHooker(DBG_Hooks):
         Hook to IDA Debugger
         """
         if self.isHooked:   # Release any current hooks
-            self.logger.debug("Debugger is already hooked, releasing previous hook.")
+            self.logger.debug("[DIE] Debugger is already hooked, releasing previous hook.")
             self.UnHook()
 
         try:
             if not is_ida_debugger_present():
-                self.logger.error("DIE cannot be started with no debugger defined.")
+                self.logger.error("[DIE] DIE cannot be started with no debugger defined.")
                 return
 
-            self.logger.info("Hooking to debugger.")
+            self.logger.info("[DIE] Hooking to debugger.")
             self.hook()
             self.isHooked = True
 
         except Exception as ex:
-            self.logger.exception("Failed to hook debugger", ex)
+            self.logger.exception("[DIE] Failed to hook debugger", ex)
             sys.exit(1)
 
     def UnHook(self):
@@ -104,13 +104,13 @@ class DebugHooker(DBG_Hooks):
         Release hooks from IDA Debugger
         """
         try:
-            self.logger.info("Removing previous debugger hooks.")
+            self.logger.info("[DIE] Removing previous debugger hooks.")
             self.unhook()
             self.isHooked = False
 
         except Exception as ex:
-            self.logger.exception("Failed to hook debugger", ex)
-            raise RuntimeError("Failed to unhook debugger")
+            self.logger.exception("[DIE] Failed to hook debugger", ex)
+            raise RuntimeError("[DIE] Failed to unhook debugger")
 
     def update_iat(self):
         """
@@ -131,7 +131,7 @@ class DebugHooker(DBG_Hooks):
         try:
             # If final breakpoint has been reached. skip all further breakpoints.
             if self.end_bp is not None and ea == self.end_bp:
-                self.logger.info("Final breakpoint reached at %s. context logging is stopped.", hex(ea))
+                self.logger.info("[DIE] Final breakpoint reached at %s. context logging is stopped.", hex(ea))
                 self.bp_handler.unsetBPs()
                 request_continue_process()
                 run_requests()
@@ -143,7 +143,7 @@ class DebugHooker(DBG_Hooks):
 
             # Set current call-stack
             if tid not in self.callStack:
-                idaapi.msg("Creating new callstack for thread %d\n" % tid)
+                idaapi.msg("[DIE] Creating new callstack for thread %d\n" % tid)
                 self.callStack[tid] = CallStack()
 
             self.current_callstack = self.callStack[tid]
@@ -153,7 +153,7 @@ class DebugHooker(DBG_Hooks):
                 try:
                     self.current_callstack.pop()
                 except DieCallStackPopError:
-                    self.logger.exception("Error while popping function from callstack")
+                    self.logger.exception("[DIE] Error while popping function from callstack")
 
                 self.bp_handler.removeRetBP(ea)
                 if not is_call(ea):
@@ -171,7 +171,7 @@ class DebugHooker(DBG_Hooks):
             return 0
 
         except Exception as ex:
-            self.logger.exception("Failed while handling breakpoint at %s:", ea, ex)
+            self.logger.exception("[DIE] Failed while handling breakpoint at %s:", ea, ex)
             return 1
 
     def dbg_step_into(self):
@@ -190,7 +190,7 @@ class DebugHooker(DBG_Hooks):
 
             # If stepped into an excepted function, remove calling bp and skip over.
             if self.bp_handler.is_exception_func(ea, iatEA):
-                self.logger.debug("Removing breakpoint from %s", hex(self.prev_bp_ea))
+                self.logger.debug("[DIE] Removing breakpoint from %s", hex(self.prev_bp_ea))
                 self.bp_handler.removeBP(self.prev_bp_ea)
                 return 0
 
@@ -199,7 +199,7 @@ class DebugHooker(DBG_Hooks):
 
             (func_adr, func_name) = self.current_callstack.get_top_func_data()
             if not func_name:
-                self.logger.debug("Stepped into function %s at address %s", func_name, hex(ea))
+                self.logger.debug("[DIE] Stepped into function %s at address %s", func_name, hex(ea))
 
             # If "Step-Into System Libraries" option is set, walk function for breakpoints
             if self.config.debugging.step_into_syslibs:
@@ -221,7 +221,7 @@ class DebugHooker(DBG_Hooks):
             pass
 
         except Exception as ex:
-            self.logger.exception("failed while stepping into breakpoint: %s", ex)
+            self.logger.exception("[DIE] failed while stepping into breakpoint: %s", ex)
             return 0
 
         finally:
@@ -241,11 +241,11 @@ class DebugHooker(DBG_Hooks):
             self.current_callstack.pop()
 
         except DieCallStackPopError as ex:
-            self.logger.exception("Error while popping function from callstack")
+            self.logger.exception("[DIE] Error while popping function from callstack")
             #TODO: Handle this exception
 
         except Exception as ex:
-            self.logger.exception("Failed while stepping until return: %s", ex)
+            self.logger.exception("[DIE] Failed while stepping until return: %s", ex)
 
         finally:
             if not self.is_dbg_pause:
@@ -270,7 +270,7 @@ class DebugHooker(DBG_Hooks):
                 run_requests()
 
         except Exception as ex:
-            self.logger.exception("Failed while handling new thread: %s", ex)
+            self.logger.exception("[DIE] Failed while handling new thread: %s", ex)
 
     def dbg_process_exit(self, pid, tid, ea, exit_code):
         """
@@ -282,7 +282,7 @@ class DebugHooker(DBG_Hooks):
                 self.profile_stop()
 
         except Exception as ex:
-            self.logger.error("Failed to stop profiling: %s", ex)
+            self.logger.error("[DIE] Failed to stop profiling: %s", ex)
 
         try:
             self.end_time = time.time()
@@ -299,7 +299,7 @@ class DebugHooker(DBG_Hooks):
             self.bp_handler.save_exceptions(die_db)
 
         except Exception as ex:
-            self.logger.exception("Failed while finalizing DIE run: %s", ex)
+            self.logger.exception("[DIE] Failed while finalizing DIE run: %s", ex)
 
     def dbg_process_start(self, pid, tid, ea, name, base, size):
         """

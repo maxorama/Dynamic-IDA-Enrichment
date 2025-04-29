@@ -23,8 +23,8 @@ class FunctionView(PluginForm):
     """
 
     def __init__(self):
-
         super(FunctionView, self).__init__()
+
         self.value_view = None
         self.bp_handler = None
         self.die_icons = None
@@ -38,6 +38,7 @@ class FunctionView(PluginForm):
         return PluginForm.Show(self,
                                "Function View",
                                options=PluginForm.WOPN_PERSIST)
+
     def OnCreate(self, form):
         """
         Called when the plugin form is created
@@ -322,7 +323,7 @@ class FunctionView(PluginForm):
             return True
 
         except Exception as ex:
-            idaapi.msg("Error while inserting thread data: %s\n" %ex)
+            idaapi.msg("[DIE] Error while inserting thread data: %s\n" %ex)
             return False
 
     def _make_function_item(self, function):
@@ -638,11 +639,6 @@ class FunctionView(PluginForm):
                 func_count_item = root_item.child(row, 1)
                 func_count_item.setText(str(count))
 
-
-
-
-
-
 ###############################################################################################
 #  Highlight Items.
 
@@ -658,7 +654,7 @@ class FunctionView(PluginForm):
             item.setFont(cur_font)
 
         except Exception as ex:
-            idaapi.msg("Error while highlighting item: %s\n" %ex)
+            idaapi.msg("[DIE] Error while highlighting item: %s\n" %ex)
 
 
     def highlight_item_row(self, item):
@@ -690,7 +686,7 @@ class FunctionView(PluginForm):
                     self.highligthed_items.append(persistent_index)
 
         except Exception as ex:
-            idaapi.msg("Error while highlighting item row: %s\n" % ex)
+            idaapi.msg("[DIE] Error while highlighting item row: %s\n" % ex)
 
 
     def clear_highlights(self):
@@ -712,7 +708,7 @@ class FunctionView(PluginForm):
             self.highligthed_items = []
 
         except Exception as ex:
-            idaapi.msg("Error while clearing highlights: %s\n" % ex)
+            idaapi.msg("[DIE] Error while clearing highlights: %s\n" % ex)
 
 
 ###############################################################################################
@@ -762,7 +758,7 @@ class FunctionView(PluginForm):
             return True
 
         except Exception as ex:
-            idaapi.msg("Error while looking up function context in FunctionView: %s\n" % ex)
+            idaapi.msg("[DIE] Error while looking up function context in FunctionView: %s\n" % ex)
             return False
 
 ###############################################################################################
@@ -817,9 +813,9 @@ class FunctionView(PluginForm):
 
         if not isinstance(function, DIE.Lib.DIEDb.dbFunction):
             if function is not None:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
             else:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs'")
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs'")
 
         self.bp_handler.add_bp_funcname_exception(function.function_name)
         return
@@ -829,9 +825,9 @@ class FunctionView(PluginForm):
 
         if not isinstance(function, DIE.Lib.DIEDb.dbFunction):
             if function is not None:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
             else:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs'")
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs'")
 
         func_context_list = self.die_db.get_function_context_list(function)
         for func_context in func_context_list:
@@ -844,9 +840,9 @@ class FunctionView(PluginForm):
 
         if not isinstance(function_context, DIE.Lib.DIEDb.dbFunction_Context):
             if function_context is not None:
-                raise ValueError("Wrong value sent to 'on_exclude_ea': %s. excpected dbFunction_Context" % function_context.__class__)
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_ea': %s. excpected dbFunction_Context" % function_context.__class__)
             else:
-                raise ValueError("Wrong value sent to 'on_exclude_ea'")
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_ea'")
 
         self.bp_handler.add_bp_ea_exception(function_context.calling_ea)
         return
@@ -856,15 +852,15 @@ class FunctionView(PluginForm):
 
         if not isinstance(function_context, DIE.Lib.DIEDb.dbFunction_Context):
             if function_context is not None:
-                raise ValueError("Wrong value sent to 'on_show_callgraph': %s. excpected dbFunction_Context" % function_context.__class__)
+                raise ValueError("[DIE] Wrong value sent to 'on_show_callgraph': %s. excpected dbFunction_Context" % function_context.__class__)
             else:
-                raise ValueError("Wrong value sent to 'on_show_callgraph'")
+                raise ValueError("[DIE] Wrong value sent to 'on_show_callgraph'")
 
         graph = nx.DiGraph()
 
         call_graph = self.die_db.get_call_graph_to(function_context)
         if not call_graph:
-            idaapi.msg("No Execution Graph")
+            idaapi.msg("[DIE] No Execution Graph")
             return
 
         for ctxt_node in call_graph:
@@ -882,9 +878,9 @@ class FunctionView(PluginForm):
 
         if not isinstance(function, DIE.Lib.DIEDb.dbFunction):
             if function is not None:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs': %s. excpected dbFunction_Context" % function.__class__)
             else:
-                raise ValueError("Wrong value sent to 'on_exclude_func_adrs'")
+                raise ValueError("[DIE] Wrong value sent to 'on_exclude_func_adrs'")
 
         if function.is_lib_func and function.lib_name is not None:
             self.bp_handler.add_module_exception(function.lib_name)
@@ -967,10 +963,10 @@ class TreeViewDelegate(QtWidgets.QStyledItemDelegate):
 
 # Singelton
 function_view = None
+
 def initialize():
     global function_view
     function_view = FunctionView()
-
 
 def get_view():
     return function_view
