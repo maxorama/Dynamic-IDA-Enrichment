@@ -121,7 +121,10 @@ def is_call(ea):
     """
     Check if the current instruction a CALL instruction
     """
-    return sark.Line(ea).insn.is_call
+    try:
+        return sark.Line(ea).insn.is_call
+    except:
+        pass
 
 def is_ret(ea):
     """

@@ -71,13 +71,10 @@ class BpHandler():
         """
         for seg_ea in idautils.Segments():
             for head in idautils.Heads(seg_ea, idc.get_segm_end(seg_ea)):
-                try:
-                    if ida_bytes.is_code(idc.get_func_flags(head)):
-                        # Add BP if instruction is a CALL
-                        if is_call(head):
-                            self.addBP(head)
-                except:
-                    pass
+                if ida_bytes.is_code(idc.get_func_flags(head)):
+                    # Add BP if instruction is a CALL
+                    if is_call(head):
+                        self.addBP(head)
 
     def unsetBPs(self):
         """

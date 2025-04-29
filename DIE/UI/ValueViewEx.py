@@ -13,14 +13,12 @@ class ValueView(idaapi.PluginForm):
     """
 
     def __init__(self):
-
         super(ValueView, self).__init__()
         self.die_db = None
         self.function_view = None
         self.highligthed_items = []
 
     def Show(self):
-
         return idaapi.PluginForm.Show(self,
                                "Value View",
                                options=idaapi.PluginForm.WOPN_PERSIST)
@@ -83,7 +81,6 @@ class ValueView(idaapi.PluginForm):
         Build the function model.
         @param model: QStandardItemModel object
         """
-
         model.clear()  # Clear the model
         root_node = model.invisibleRootItem()
 
@@ -102,7 +99,6 @@ class ValueView(idaapi.PluginForm):
         Make a value item type
         @param type: item type
         """
-
         item_value_type = QtGui.QStandardItem(type)
         item_value_type.setEditable(False)
 
@@ -154,7 +150,7 @@ class ValueView(idaapi.PluginForm):
             item.setFont(cur_font)
 
         except Exception as ex:
-            idaapi.msg("Error while highlighting item: %s\n" % ex)
+            idaapi.msg("[DIE] Error while highlighting item: %s\n" % ex)
 
     def highlight_item_row(self, item):
         """
@@ -185,7 +181,7 @@ class ValueView(idaapi.PluginForm):
                     self.highligthed_items.append(persistent_index)
 
         except Exception as ex:
-            idaapi.msg("Error while highlighting item row: %s\n" % ex)
+            idaapi.msg("[DIE] Error while highlighting item row: %s\n" % ex)
 
 
     def clear_highlights(self):
@@ -207,7 +203,7 @@ class ValueView(idaapi.PluginForm):
             self.highligthed_items = []
 
         except Exception as ex:
-            idaapi.msg("Error while clearing highlights: %s\n" % ex)
+            idaapi.msg("[DIE] Error while clearing highlights: %s\n" % ex)
 
 ###############################################################################################
 #  Find Items
@@ -236,7 +232,7 @@ class ValueView(idaapi.PluginForm):
                 self.highlight_item_row(item)
 
         except Exception as ex:
-            idaapi.msg("Error while finding value: %s\n" % ex)
+            idaapi.msg("[DIE] Error while finding value: %s\n" % ex)
 
 
 ###############################################################################################
@@ -252,7 +248,6 @@ class ValueView(idaapi.PluginForm):
         @param index: QModelIndex object of the clicked tree index item.
         @return:
         """
-
         func_context_list = index.data(role=DIE.UI.ContextList_Role)
         try:
             if self.function_view is None:
@@ -265,7 +260,7 @@ class ValueView(idaapi.PluginForm):
                 self.function_view.find_context_list(func_context_list)
 
         except Exception as ex:
-            idaapi.msg("Error while loading function view: %s\n" % ex)
+            idaapi.msg("[DIE] Error while loading function view: %s\n" % ex)
 
     def on_value_type_combobox_change(self, value_type):
         """
