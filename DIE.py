@@ -379,8 +379,7 @@ class DieManager:
     def del_menu_items(self):
         for menu_name in self._menus_names:
             idaapi.unregister_action(menu_name)
-        idaapi.delete_menu("DIE")
-
+        idaapi.delete_menu("Edit/DIE/")
 
     ###########################################################################
     # Debugging

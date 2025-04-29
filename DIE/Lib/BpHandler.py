@@ -78,7 +78,7 @@ class BpHandler():
                             self.addBP(head)
                 except:
                     pass
-    
+
     def unsetBPs(self):
         """
         Remove all DIE set BreakPoints
