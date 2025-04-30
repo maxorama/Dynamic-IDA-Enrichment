@@ -87,7 +87,6 @@ class FunctionView(PluginForm):
         action_exclude_ea = QtWidgets.QAction("Exclude Address", self.functionTreeView, triggered=lambda: self.on_exclude_ea(self.context_menu_param))
         action_exclude_library = QtWidgets.QAction("Exclude Library", self.functionTreeView, triggered=lambda: self.on_exclude_library(self.context_menu_param))
         action_value_detail = QtWidgets.QAction("Inspect Value Details", self.functionTreeView, triggered=lambda: self.on_value_detail(self.context_menu_param))
-
         action_show_callgraph = QtWidgets.QAction("Show Call-Graph", self.functionTreeView, triggered=lambda: self.on_show_callgraph(self.context_menu_param))
 
         # Function ContextMenu

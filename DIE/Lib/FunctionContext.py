@@ -83,9 +83,9 @@ class FunctionContext():
 
         except DIE.Lib.DIE_Exceptions.DieNoFunction:
             if self.config.function_context.new_func_analysis:
-                self.logger.info("Could not retrieve function information at address: %s", hex(ea))
+                self.logger.info("[DIE] Could not retrieve function information at address: %s", hex(ea))
             else:
-                self.logger.debug("Could not retrieve function information at address: %s", hex(ea))
+                self.logger.debug("[DIE] Could not retrieve function information at address: %s", hex(ea))
 
             self.function = None
 
@@ -101,13 +101,13 @@ class FunctionContext():
         """
         try:
             if not self.callingEA:
-                self.logger.error("Error: could not locate the calling ea for function %s", self.function.funcName)
+                self.logger.error("[DIE] Error: could not locate the calling ea for function %s", self.function.funcName)
                 return False
 
             return is_indirect(self.callingEA)
 
         except Exception as ex:
-            self.logger.error("Failed while checking for indirect call: %s", ex)
+            self.logger.error("[DIE] Failed while checking for indirect call: %s", ex)
             return False
 
     def get_arg_values_call(self):
@@ -127,7 +127,7 @@ class FunctionContext():
         self.callValues = self.function_parser.parse_function_args_call()  # Get function Arguments
 
         if self.callValues is None:
-            self.logger.error("Failed parsing function arguments")
+            self.logger.error("[DIE] Failed parsing function arguments")
             self.no_ret_context = True
             return False
 
@@ -149,7 +149,7 @@ class FunctionContext():
             return False
 
         if self.no_ret_context:
-            self.logger.error("Call values must be retrieved prior to return values.")
+            self.logger.error("[DIE] Call values must be retrieved prior to return values.")
             return False
 
         # If no function arg retrieval is disabled in configuration - quit:
@@ -180,18 +180,18 @@ class FunctionContext():
             return Function(ea, iatEA, library_name=library_name)
 
         except DIE.Lib.DIE_Exceptions.DieNoFunction as ex:
-            self.logger.debug("Trying to define a new function at address: %s", hex(ea))
+            self.logger.debug("[DIE] Trying to define a new function at address: %s", hex(ea))
             if ida_funcs.add_func(ea, BADADDR):
-                self.logger.info("New function was defined at: %s", hex(ea))
+                self.logger.info("[DIE] New function was defined at: %s", hex(ea))
 
                 func_start_adrs = get_function_start_address(ea)
                 func_end_adrs = get_function_end_address(ea)
 
-                self.logger.debug("Analyzing new area.")
+                self.logger.debug("[DIE] Analyzing new area.")
                 func_t = idaapi.get_func(ea)
                 idaapi.reanalyze_function(func_t)
 
-                self.logger.debug("Refresh debugger memory")
+                self.logger.debug("[DIE] Refresh debugger memory")
                 invalidate_dbgmem_contents(func_start_adrs, func_end_adrs)
 
                 # If this second attempt fails again, the exception should be handled by the calling function.
@@ -210,7 +210,7 @@ class FunctionContext():
             calling_seg = idaapi.getseg(self.callingEA)
             callee_seg = idaapi.getseg(ea)
             if callee_seg.is_loader_segm() and calling_seg.is_loader_segm():
-                self.logger.info("Adding XREF from: %s to: %s", hex(self.callingEA), hex(ea))
+                self.logger.info("[DIE] Adding XREF from: %s to: %s", hex(self.callingEA), hex(ea))
                 return add_call_xref(self.callingEA, ea)
 
         return False

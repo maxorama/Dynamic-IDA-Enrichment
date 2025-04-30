@@ -79,8 +79,8 @@ class DieManager:
 
         self.debugAPI = DebugAPI.DebugHooker(is_dbg_pause, is_dbg_profile)
         DIE.Lib.DIEDb.initialize_db()
-        self.die_db = DIE.Lib.DIEDb.get_db()
 
+        self.die_db = DIE.Lib.DIEDb.get_db()
         self.is_marked = False
 
         DIE.UI.FunctionViewEx.initialize()
@@ -534,7 +534,7 @@ class DIEPlugin(idaapi.plugin_t):
 
         except Exception as ex:
             idaapi.msg("Failed to initialize DIE. {}\n".format(ex))
-            self.die_manager.del_menu_items()
+            die_manager.del_menu_items()
             idaapi.msg("Errors and fun!\n")
             return idaapi.PLUGIN_SKIP
 

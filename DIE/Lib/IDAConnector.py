@@ -172,7 +172,7 @@ def regOffsetToName(offset):
 
     reg_name = idaapi.get_reg_name(offset, native_size / 8)
     if not reg_name:
-        raise ValueError("Failed to retrieve register name.")
+        raise ValueError("[DIE] Failed to retrieve register name.")
 
     return reg_name
 

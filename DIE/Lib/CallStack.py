@@ -1,5 +1,6 @@
 from DIE.Lib.DIE_Exceptions import DieCallStackPushError, DieCallStackPopError
 from DIE.Lib.FunctionContext import *
+
 import idautils
 from collections import defaultdict
 
@@ -7,7 +8,6 @@ class CallStack():
     """
     DIE Call stack Implementation
     """
-
     def __init__(self):
         """
         Ctor
@@ -54,7 +54,7 @@ class CallStack():
                 parent_func_context.child_func_context.append(funcContext)
 
             if funcContext.empty:
-                self.logger.debug("Could not generate function context for ea: %s", hex(ea))
+                self.logger.debug("[DIE] Could not generate function context for ea: %s", hex(ea))
                 callStackTup = (callTree_Indx, funcContext)
                 self.callStack.append(callStackTup)
                 return -1
@@ -69,7 +69,7 @@ class CallStack():
             return self.function_counter[funcContext.function.funcName]
 
         except Exception as ex:
-            self.logger.exception("Error while pushing function at address %s to callstack", hex(ea))
+            self.logger.exception("[DIE] Error while pushing function at address %s to callstack", hex(ea))
             raise DieCallStackPushError(ea)
 
     def pop(self):
@@ -85,16 +85,18 @@ class CallStack():
             (callTree_Indx, funcContext) = self.callStack.pop()
 
             if funcContext is None:
-                self.logger.error("Error while poping function from callstack, "
+                self.logger.error("[DIE] Error while poping function from callstack, "
                                   "no function context available for this function")
                 return False
 
             funcContext.get_arg_values_ret()  # Update the call-tree context
-            #self.callTree.append(funcContext)
+#            self.callTree.append(funcContext)
+
             return True
 
         except Exception as ex:
-           raise DieCallStackPopError("Error while poping function from callstack")
+            pass
+#           raise DieCallStackPopError("[DIE] Error while poping function from callstack")
 
     def check_if_new_func(self, ea, iatEA):
         """
@@ -124,7 +126,7 @@ class CallStack():
             return True
 
         except Exception as ex:
-            self.logger.exception("Failed while add function %s to function counter: %s", func_name, ex)
+            self.logger.exception("[DIE] Failed while add function %s to function counter: %s", func_name, ex)
             return False
 
     def get_top_func_data(self):
@@ -147,5 +149,5 @@ class CallStack():
             return None
 
         except Exception as ex:
-            self.logger.exception("Error while retrieving function data for top-of-call-stack item:", ex)
+            self.logger.exception("[DIE] Error while retrieving function data for top-of-call-stack item:", ex)
             return None

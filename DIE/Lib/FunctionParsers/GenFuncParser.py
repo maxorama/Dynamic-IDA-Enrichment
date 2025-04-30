@@ -7,7 +7,6 @@ class GenericFunctionParser(FunctionParserBase):
     A generic function parser.
     This parser parses arguments by their index order.
     """
-
     def __init__(self, function):
         """
         @param function: A Function instance
@@ -26,5 +25,5 @@ class GenericFunctionParser(FunctionParserBase):
             return arg_values
 
         except Exception as ex:
-            self.logger.error("Error while parsing function: %s", ex)
+            self.logger.error("[DIE] Error while parsing function: %s", ex)
             return None

@@ -19,7 +19,6 @@ class DIE_DB():
     DIE Database class.
     """
     def __init__(self):
-
         self.logger = logging.getLogger(__name__)
 
         self.is_saved = True
@@ -41,7 +40,6 @@ class DIE_DB():
         self.excluded_funcNames = []        # A list of excluded function names
         self.excluded_bp_ea = []            # A list of excluded breakpoint addresses
         self.excluded_funcNames_part = []   # A list of excluded partial function names
-
     #############################################################################
     # Retrieve database items
     #############################################################################
@@ -51,7 +49,6 @@ class DIE_DB():
         Get a list of all functions in the db
         @return: A list of dbFunction objects
         """
-
         return self.functions.values()
 
     def get_function_by_name(self, function_name):
@@ -126,7 +123,6 @@ class DIE_DB():
         @param function_id: a dbFunction object ID
         @return: Name of function or None on error
         """
-
         if not function_id in self.functions:
             return "UNKN_FUNCTION"
 
@@ -484,7 +480,6 @@ class DIE_DB():
         @param call_tree: call_tree (List of FunctionContext objects).
         @return:
         """
-
         try:
             cur_thread = dbThread(thread_num)
             thread_id = id(cur_thread)
@@ -523,7 +518,6 @@ class DIE_DB():
                                                   function_context.total_proc_time,
                                                   thread_id)
             if not function_context.empty:
-
                 for func_ctxt in function_context.child_func_context:
                     cur_func_context.child_func_ctxt_id_list.append(func_ctxt.id)
 
@@ -557,7 +551,6 @@ class DIE_DB():
         @param function_context: the calling dbFunction_Context object
         @return:
         """
-
         try:
             cur_function = dbFunction(function.funcName, function.func_start, function.func_end, function.proto_ea,
                                       function.argNum, function.isLibFunc, function.library_name)
@@ -675,7 +668,7 @@ class DIE_DB():
             return parsed_val_id
 
         except Exception as ex:
-            self.logger.exception("Error while loading parsed data into DieDB: %s", ex)
+            self.logger.exception("[DIE] Error while loading parsed data into DieDB: %s", ex)
 
 ####################################################################################
 # Serialization
@@ -696,7 +689,7 @@ class DIE_DB():
         try:
 
             if self.is_saved:
-                self.logger.info("DB was not saved - no data to save")
+                self.logger.info("[DIE] DB was not saved - no data to save")
                 return
 
             if file_name is None:
@@ -766,11 +759,13 @@ class DIE_DB():
 # Singleton
 #############################################################################
 
-__die_db = DIE_DB()
+initialized = False
+__die_db = None
 
 def initialize_db():
     global __die_db
     __die_db = DIE_DB()
 
 def get_db():
-    return __die_db
+    global initialized
+    return __die_db if initialized == True else DIE_DB()

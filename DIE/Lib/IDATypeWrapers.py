@@ -131,13 +131,17 @@ class FuncArg():
         """
         Stack Offset for stack args, or ph.regnames offset for register args
         """
+
+        ????????????????????????????
+
+
         if self.isStack():
             return self.argloc.stkoff()
 
         if self.isReg():
             return self.getRegOffset()
 
-        self.logger.error("FuncArg: Failed to retrieve argument offset.")
+        self.logger.error("[DIE] FuncArg: Failed to retrieve argument offset.")
         return False
 
     def registerName(self):
@@ -145,7 +149,7 @@ class FuncArg():
         Get register name for this arg
         """
         if self.isReg():
-            return regOffsetToName(self.offset())
+            return None if self.offset() == 0 else regOffsetToName(self.offset())
 
         return None
 
@@ -196,7 +200,6 @@ class Function():
     """
     Function class
     """
-
     def __init__(self, ea, iatEA=None, library_name=None):
         """
         Ctor
@@ -212,8 +215,8 @@ class Function():
             raise DIE.Lib.DIE_Exceptions.DieNoFunction("No Function at 0x%08X" % (ea, ))
 
         self.funcName = get_function_name(function.ea)
-        self.func_start = function.startEA
-        self.func_end = function.endEA
+        self.func_start = function.start_ea
+        self.func_end = function.end_ea
 
         self.proto_ea = self.getFuncProtoAdr()      # Address of function prototype
         self.typeInfo = idaapi.tinfo_t()            # Function type info
@@ -382,7 +385,6 @@ class Struct():
         Extract the struct data from tinfo_t object and populate all relevant class properties.
         @return: True if successful, otherwise False
         """
-
         if self.type_info.is_udt():
             if self.type_info.get_udt_details(self.udt_type_data):
 
